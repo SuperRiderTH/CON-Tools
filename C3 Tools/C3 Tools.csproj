@@ -157,6 +157,12 @@
       <DependentUpon>EventManagerEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="MoggSplitter.cs" />
+    <Compile Include="VolumeNormalizer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="VolumeNormalizer.Designer.cs">
+      <DependentUpon>VolumeNormalizer.cs</DependentUpon>
+    </Compile>
     <Compile Include="SMDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -421,6 +427,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MIDISelector.resx">
       <DependentUpon>MIDISelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VolumeNormalizer.resx">
+      <DependentUpon>VolumeNormalizer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PS3Converter.resx">
       <DependentUpon>PS3Converter.cs</DependentUpon>
