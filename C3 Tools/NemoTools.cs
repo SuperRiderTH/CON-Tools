@@ -2716,8 +2716,14 @@ namespace C3Tools
 
         public bool MoggIsEncrypted(byte[] mData)
         {
-            //REDACTED BY TROJANNEMO
-            return false;
+            if (mData[0] != 0x0A)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public bool DecM(byte[] mData, bool bypass = false, bool keep_header = true, DecryptMode mode = DecryptMode.ToFile, string mOut = "")
@@ -2727,29 +2733,42 @@ namespace C3Tools
 
             // I am making a LOT of assumptions on how this works.
 
-            if (mData[0] != 0x0A)
+            if (bypass)
+            {
+                //TODO: What are we bypassing here?
+            }
+
+            if (MoggIsEncrypted(mData))
             {
                 throw new Exception("Audio file is encrypted!");
             }
 
-            if (mode == DecryptMode.ToMemory)
+            if (keep_header == false)
             {
-                throw new Exception("TODO: Write MOGG to memory.");
-            } 
+                RemoveMHeader(mData, mode, mOut);
+                return true;
+            }
             else
             {
-                WriteOutData(mData, mOut);
-
-                if (File.Exists(mOut))
-                {
+                if (mode == DecryptMode.ToMemory)
+                {   
+                    PlayingSongOggData = mData;
                     return true;
                 }
                 else
                 {
-                    throw new Exception("Was unable to write MOGG to location!");
+                    WriteOutData(mData, mOut);
+
+                    if (File.Exists(mOut))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        throw new Exception("Was unable to write MOGG to location!");
+                    }
                 }
             }
-            
         }
 
         public void RemoveMHeader(byte[] mData, DecryptMode mode, string mOut)
