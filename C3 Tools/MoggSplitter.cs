@@ -74,7 +74,9 @@ namespace C3Tools
                 return false;
             }
             LoadLibraries();
-            if (Tools.DecM(mData, bypass, false, DecryptMode.ToMemory)) return true;
+            //if (Tools.DecM(mData, bypass, false, DecryptMode.ToMemory)) return true;
+            if ( Tools.DecM(mData, bypass, false, DecryptMode.ToFile,  $"{Path.GetDirectoryName(CON_file)}\\{Parser.Songs[0].InternalName}_ext\\song.ogg" ) ) return true;
+
             ErrorLog.Add("Mogg file is encrypted and I could not decrypt it, can't split it");
             return false;
         }

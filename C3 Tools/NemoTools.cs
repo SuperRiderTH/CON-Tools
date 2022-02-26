@@ -2723,7 +2723,33 @@ namespace C3Tools
         public bool DecM(byte[] mData, bool bypass = false, bool keep_header = true, DecryptMode mode = DecryptMode.ToFile, string mOut = "")
         {
             //REDACTED BY TROJANNEMO
-            return false;
+            // okay well, I need this
+
+            // I am making a LOT of assumptions on how this works.
+
+            if (mData[0] != 0x0A)
+            {
+                throw new Exception("Audio file is encrypted!");
+            }
+
+            if (mode == DecryptMode.ToMemory)
+            {
+                throw new Exception("TODO: Write MOGG to memory.");
+            } 
+            else
+            {
+                WriteOutData(mData, mOut);
+
+                if (File.Exists(mOut))
+                {
+                    return true;
+                }
+                else
+                {
+                    throw new Exception("Was unable to write MOGG to location!");
+                }
+            }
+            
         }
 
         public void RemoveMHeader(byte[] mData, DecryptMode mode, string mOut)
@@ -2749,6 +2775,7 @@ namespace C3Tools
 
         public void WriteOutData(byte[] mData, string mOut)
         {
+            System.Windows.Forms.MessageBox.Show(mOut);
             DeleteFile(mOut);
             using (var fs = File.Create(mOut))
             {

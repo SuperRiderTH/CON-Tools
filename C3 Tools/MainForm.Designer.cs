@@ -122,6 +122,7 @@
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.updater = new System.ComponentModel.BackgroundWorker();
             this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.btnVolumeNormalizer = new System.Windows.Forms.Button();
             this.contextMenuStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picBanner)).BeginInit();
@@ -926,7 +927,7 @@
             this.picBanner.ContextMenuStrip = this.contextMenuStrip3;
             this.picBanner.Cursor = System.Windows.Forms.Cursors.Hand;
             this.picBanner.Image = global::C3Tools.Properties.Resources.c3banner;
-            this.picBanner.Location = new System.Drawing.Point(0, 315);
+            this.picBanner.Location = new System.Drawing.Point(0, 382);
             this.picBanner.Name = "picBanner";
             this.picBanner.Size = new System.Drawing.Size(715, 80);
             this.picBanner.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -1171,6 +1172,22 @@
             this.timer2.Interval = 1000;
             this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
             // 
+            // btnVolumeNormalizer
+            // 
+            this.btnVolumeNormalizer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(34)))), ((int)(((byte)(169)))), ((int)(((byte)(31)))));
+            this.btnVolumeNormalizer.ContextMenuStrip = this.contextMenuStrip1;
+            this.btnVolumeNormalizer.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnVolumeNormalizer.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnVolumeNormalizer.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnVolumeNormalizer.ForeColor = System.Drawing.Color.White;
+            this.btnVolumeNormalizer.Location = new System.Drawing.Point(12, 324);
+            this.btnVolumeNormalizer.Name = "btnVolumeNormalizer";
+            this.btnVolumeNormalizer.Size = new System.Drawing.Size(122, 43);
+            this.btnVolumeNormalizer.TabIndex = 31;
+            this.btnVolumeNormalizer.Text = "Volume Normalizer";
+            this.btnVolumeNormalizer.UseVisualStyleBackColor = false;
+            this.btnVolumeNormalizer.Click += new System.EventHandler(this.btnVolumeNormalizer_Click);
+            // 
             // MainForm
             // 
             this.AllowDrop = true;
@@ -1179,8 +1196,9 @@
             this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.BackgroundImage = global::C3Tools.Properties.Resources.bg3;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(714, 395);
+            this.ClientSize = new System.Drawing.Size(714, 462);
             this.ContextMenuStrip = this.contextMenuStrip2;
+            this.Controls.Add(this.btnVolumeNormalizer);
             this.Controls.Add(this.btnRBtoUSB);
             this.Controls.Add(this.btnSettings);
             this.Controls.Add(this.btnCONConverter);
@@ -1331,6 +1349,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem9;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem8;
         private System.Windows.Forms.ToolStripMenuItem administratorModeWarning;
+        private System.Windows.Forms.Button btnVolumeNormalizer;
     }
 }
 

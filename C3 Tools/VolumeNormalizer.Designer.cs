@@ -38,31 +38,19 @@
             this.picPin = new System.Windows.Forms.PictureBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.useguitaroggForNonmultitrackSongs = new System.Windows.Forms.ToolStripMenuItem();
-            this.useSubgenreInsteadOfGenreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.cleanUppngxboxFiles = new System.Windows.Forms.ToolStripMenuItem();
+            this.chkBackup = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnReset = new System.Windows.Forms.Button();
             this.txtFolder = new System.Windows.Forms.TextBox();
             this.btnFolder = new System.Windows.Forms.Button();
             this.btnRefresh = new System.Windows.Forms.Button();
-            this.chkRAR = new System.Windows.Forms.CheckBox();
             this.picWorking = new System.Windows.Forms.PictureBox();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.radioSeparate = new System.Windows.Forms.RadioButton();
-            this.radioAudacity = new System.Windows.Forms.RadioButton();
-            this.radioLeaveMogg = new System.Windows.Forms.RadioButton();
-            this.grpMogg = new System.Windows.Forms.GroupBox();
-            this.domainQuality = new System.Windows.Forms.DomainUpDown();
-            this.lblQuality = new System.Windows.Forms.Label();
-            this.radioDownmix = new System.Windows.Forms.RadioButton();
-            this.chkNoC3 = new System.Windows.Forms.CheckBox();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picPin)).BeginInit();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picWorking)).BeginInit();
-            this.grpMogg.SuspendLayout();
             this.SuspendLayout();
             // 
             // lstLog
@@ -76,9 +64,9 @@
             this.lstLog.ContextMenuStrip = this.contextMenuStrip1;
             this.lstLog.FormattingEnabled = true;
             this.lstLog.HorizontalScrollbar = true;
-            this.lstLog.Location = new System.Drawing.Point(12, 174);
+            this.lstLog.Location = new System.Drawing.Point(12, 122);
             this.lstLog.Name = "lstLog";
-            this.lstLog.Size = new System.Drawing.Size(568, 171);
+            this.lstLog.Size = new System.Drawing.Size(568, 223);
             this.lstLog.TabIndex = 12;
             this.lstLog.DragDrop += new System.Windows.Forms.DragEventHandler(this.HandleDragDrop);
             this.lstLog.DragEnter += new System.Windows.Forms.DragEventHandler(this.HandleDragEnter);
@@ -108,7 +96,7 @@
             this.btnBegin.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnBegin.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnBegin.ForeColor = System.Drawing.Color.White;
-            this.btnBegin.Location = new System.Drawing.Point(516, 139);
+            this.btnBegin.Location = new System.Drawing.Point(516, 86);
             this.btnBegin.Name = "btnBegin";
             this.btnBegin.Size = new System.Drawing.Size(64, 29);
             this.btnBegin.TabIndex = 51;
@@ -149,38 +137,16 @@
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.useguitaroggForNonmultitrackSongs,
-            this.useSubgenreInsteadOfGenreToolStripMenuItem,
-            this.cleanUppngxboxFiles});
+            this.chkBackup});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.optionsToolStripMenuItem.Text = "Options";
             // 
-            // useguitaroggForNonmultitrackSongs
+            // chkBackup
             // 
-            this.useguitaroggForNonmultitrackSongs.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.useguitaroggForNonmultitrackSongs.Checked = true;
-            this.useguitaroggForNonmultitrackSongs.CheckOnClick = true;
-            this.useguitaroggForNonmultitrackSongs.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.useguitaroggForNonmultitrackSongs.Name = "useguitaroggForNonmultitrackSongs";
-            this.useguitaroggForNonmultitrackSongs.Size = new System.Drawing.Size(292, 22);
-            this.useguitaroggForNonmultitrackSongs.Text = "Use \'guitar.ogg\' for non-multitrack songs";
-            // 
-            // useSubgenreInsteadOfGenreToolStripMenuItem
-            // 
-            this.useSubgenreInsteadOfGenreToolStripMenuItem.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.useSubgenreInsteadOfGenreToolStripMenuItem.CheckOnClick = true;
-            this.useSubgenreInsteadOfGenreToolStripMenuItem.Name = "useSubgenreInsteadOfGenreToolStripMenuItem";
-            this.useSubgenreInsteadOfGenreToolStripMenuItem.Size = new System.Drawing.Size(292, 22);
-            this.useSubgenreInsteadOfGenreToolStripMenuItem.Text = "Use subgenre instead of genre";
-            // 
-            // cleanUppngxboxFiles
-            // 
-            this.cleanUppngxboxFiles.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.cleanUppngxboxFiles.CheckOnClick = true;
-            this.cleanUppngxboxFiles.Name = "cleanUppngxboxFiles";
-            this.cleanUppngxboxFiles.Size = new System.Drawing.Size(292, 22);
-            this.cleanUppngxboxFiles.Text = "Clean up *.png_xbox files";
+            this.chkBackup.Name = "chkBackup";
+            this.chkBackup.Size = new System.Drawing.Size(181, 22);
+            this.chkBackup.Text = "Backup Original DTA";
             // 
             // helpToolStripMenuItem1
             // 
@@ -201,7 +167,7 @@
             this.btnReset.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnReset.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnReset.ForeColor = System.Drawing.Color.White;
-            this.btnReset.Location = new System.Drawing.Point(12, 139);
+            this.btnReset.Location = new System.Drawing.Point(12, 86);
             this.btnReset.Name = "btnReset";
             this.btnReset.Size = new System.Drawing.Size(100, 29);
             this.btnReset.TabIndex = 54;
@@ -257,21 +223,10 @@
             this.btnRefresh.Visible = false;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
-            // chkRAR
-            // 
-            this.chkRAR.AutoSize = true;
-            this.chkRAR.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.chkRAR.Location = new System.Drawing.Point(166, 40);
-            this.chkRAR.Name = "chkRAR";
-            this.chkRAR.Size = new System.Drawing.Size(189, 17);
-            this.chkRAR.TabIndex = 55;
-            this.chkRAR.Text = "Create RAR archive for each song";
-            this.chkRAR.UseVisualStyleBackColor = true;
-            // 
             // picWorking
             // 
             this.picWorking.Image = global::C3Tools.Properties.Resources.working;
-            this.picWorking.Location = new System.Drawing.Point(242, 153);
+            this.picWorking.Location = new System.Drawing.Point(240, 100);
             this.picWorking.Name = "picWorking";
             this.picWorking.Size = new System.Drawing.Size(128, 15);
             this.picWorking.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -286,108 +241,6 @@
             this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
             this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
             // 
-            // radioSeparate
-            // 
-            this.radioSeparate.AutoSize = true;
-            this.radioSeparate.Checked = true;
-            this.radioSeparate.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.radioSeparate.Location = new System.Drawing.Point(9, 20);
-            this.radioSeparate.Name = "radioSeparate";
-            this.radioSeparate.Size = new System.Drawing.Size(138, 17);
-            this.radioSeparate.TabIndex = 63;
-            this.radioSeparate.TabStop = true;
-            this.radioSeparate.Text = "Try to separate to stems";
-            this.radioSeparate.UseVisualStyleBackColor = true;
-            this.radioSeparate.CheckedChanged += new System.EventHandler(this.radioSeparate_CheckedChanged);
-            // 
-            // radioAudacity
-            // 
-            this.radioAudacity.AutoSize = true;
-            this.radioAudacity.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.radioAudacity.Location = new System.Drawing.Point(377, 20);
-            this.radioAudacity.Name = "radioAudacity";
-            this.radioAudacity.Size = new System.Drawing.Size(106, 17);
-            this.radioAudacity.TabIndex = 64;
-            this.radioAudacity.Text = "Send to Audacity";
-            this.radioAudacity.UseVisualStyleBackColor = true;
-            // 
-            // radioLeaveMogg
-            // 
-            this.radioLeaveMogg.AutoSize = true;
-            this.radioLeaveMogg.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.radioLeaveMogg.Location = new System.Drawing.Point(489, 20);
-            this.radioLeaveMogg.Name = "radioLeaveMogg";
-            this.radioLeaveMogg.Size = new System.Drawing.Size(77, 17);
-            this.radioLeaveMogg.TabIndex = 67;
-            this.radioLeaveMogg.Text = "Do nothing";
-            this.radioLeaveMogg.UseVisualStyleBackColor = true;
-            // 
-            // grpMogg
-            // 
-            this.grpMogg.Controls.Add(this.domainQuality);
-            this.grpMogg.Controls.Add(this.lblQuality);
-            this.grpMogg.Controls.Add(this.radioDownmix);
-            this.grpMogg.Controls.Add(this.radioSeparate);
-            this.grpMogg.Controls.Add(this.radioAudacity);
-            this.grpMogg.Controls.Add(this.radioLeaveMogg);
-            this.grpMogg.Location = new System.Drawing.Point(12, 86);
-            this.grpMogg.Name = "grpMogg";
-            this.grpMogg.Size = new System.Drawing.Size(568, 47);
-            this.grpMogg.TabIndex = 69;
-            this.grpMogg.TabStop = false;
-            this.grpMogg.Text = "Audio (mogg) options:";
-            // 
-            // domainQuality
-            // 
-            this.domainQuality.Items.Add("10");
-            this.domainQuality.Items.Add("9");
-            this.domainQuality.Items.Add("8");
-            this.domainQuality.Items.Add("7");
-            this.domainQuality.Items.Add("6");
-            this.domainQuality.Items.Add("5");
-            this.domainQuality.Items.Add("4");
-            this.domainQuality.Items.Add("3");
-            this.domainQuality.Items.Add("2");
-            this.domainQuality.Items.Add("1");
-            this.domainQuality.Location = new System.Drawing.Point(312, 19);
-            this.domainQuality.Name = "domainQuality";
-            this.domainQuality.ReadOnly = true;
-            this.domainQuality.Size = new System.Drawing.Size(36, 20);
-            this.domainQuality.TabIndex = 71;
-            this.domainQuality.Text = "5";
-            // 
-            // lblQuality
-            // 
-            this.lblQuality.AutoSize = true;
-            this.lblQuality.Location = new System.Drawing.Point(271, 22);
-            this.lblQuality.Name = "lblQuality";
-            this.lblQuality.Size = new System.Drawing.Size(42, 13);
-            this.lblQuality.TabIndex = 70;
-            this.lblQuality.Text = "Quality:";
-            // 
-            // radioDownmix
-            // 
-            this.radioDownmix.AutoSize = true;
-            this.radioDownmix.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.radioDownmix.Location = new System.Drawing.Point(153, 20);
-            this.radioDownmix.Name = "radioDownmix";
-            this.radioDownmix.Size = new System.Drawing.Size(112, 17);
-            this.radioDownmix.TabIndex = 69;
-            this.radioDownmix.Text = "Downmix to stereo";
-            this.radioDownmix.UseVisualStyleBackColor = true;
-            // 
-            // chkNoC3
-            // 
-            this.chkNoC3.AutoSize = true;
-            this.chkNoC3.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.chkNoC3.Location = new System.Drawing.Point(361, 40);
-            this.chkNoC3.Name = "chkNoC3";
-            this.chkNoC3.Size = new System.Drawing.Size(107, 17);
-            this.chkNoC3.TabIndex = 70;
-            this.chkNoC3.Text = "Don\'t mention C3";
-            this.chkNoC3.UseVisualStyleBackColor = true;
-            this.chkNoC3.Visible = false;
-            // 
             // VolumeNormalizer
             // 
             this.AllowDrop = true;
@@ -395,15 +248,12 @@
             this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.ClientSize = new System.Drawing.Size(592, 356);
             this.Controls.Add(this.picPin);
-            this.Controls.Add(this.chkNoC3);
-            this.Controls.Add(this.grpMogg);
             this.Controls.Add(this.picWorking);
             this.Controls.Add(this.btnReset);
             this.Controls.Add(this.txtFolder);
             this.Controls.Add(this.btnFolder);
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.btnBegin);
-            this.Controls.Add(this.chkRAR);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.lstLog);
             this.DoubleBuffered = true;
@@ -412,18 +262,16 @@
             this.Name = "VolumeNormalizer";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Volume Normalizer";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PhaseShiftPrep_FormClosing);
-            this.Shown += new System.EventHandler(this.PhaseShiftPrep_Shown);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.VolumeNormalizerPrep_FormClosing);
+            this.Shown += new System.EventHandler(this.VolumeNormalizerPrep_Shown);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.HandleDragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.HandleDragEnter);
-            this.Resize += new System.EventHandler(this.PhaseShiftPrep_Resize);
+            this.Resize += new System.EventHandler(this.VolumeNormalizerPrep_Resize);
             this.contextMenuStrip1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picPin)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picWorking)).EndInit();
-            this.grpMogg.ResumeLayout(false);
-            this.grpMogg.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -443,21 +291,10 @@
         private System.Windows.Forms.Button btnFolder;
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.Button btnBegin;
-        private System.Windows.Forms.CheckBox chkRAR;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem useSubgenreInsteadOfGenreToolStripMenuItem;
         private System.Windows.Forms.PictureBox picWorking;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
-        private System.Windows.Forms.RadioButton radioSeparate;
-        private System.Windows.Forms.RadioButton radioAudacity;
-        private System.Windows.Forms.ToolStripMenuItem useguitaroggForNonmultitrackSongs;
-        private System.Windows.Forms.RadioButton radioLeaveMogg;
-        private System.Windows.Forms.GroupBox grpMogg;
-        private System.Windows.Forms.RadioButton radioDownmix;
         private System.Windows.Forms.PictureBox picPin;
-        private System.Windows.Forms.ToolStripMenuItem cleanUppngxboxFiles;
-        private System.Windows.Forms.DomainUpDown domainQuality;
-        private System.Windows.Forms.Label lblQuality;
-        private System.Windows.Forms.CheckBox chkNoC3;
+        private System.Windows.Forms.ToolStripMenuItem chkBackup;
     }
 }

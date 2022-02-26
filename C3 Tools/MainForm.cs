@@ -1426,7 +1426,16 @@ namespace C3Tools
         private void c3Forums_Click(object sender, EventArgs e)
         {
             Process.Start("http://customscreators.com/index.php?/topic/9095-c3-con-tools-v398-073116/");
-        }  
+        }
+
+        private void btnVolumeNormalizer_Click(object sender, EventArgs e)
+        {
+            if (MovedButton) return;
+            var newVolumeNormalizerPrep = new VolumeNormalizer(btnVolumeNormalizer.BackColor, btnVolumeNormalizer.ForeColor);
+            activeForm = newVolumeNormalizerPrep;
+            activeForms.Add(activeForm);
+            newVolumeNormalizerPrep.Show();
+        }
     }
 
     public class MyButton
