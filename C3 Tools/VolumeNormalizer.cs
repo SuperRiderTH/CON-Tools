@@ -325,7 +325,9 @@ namespace C3Tools
             // Strip most of the decimal places, because we don't need to be *that* precise.
             offset = double.Parse(offset.ToString().Substring(0, offset.ToString().IndexOf('.') + 3));
 
-            Log($"Average RMS of song is: {dBAverage.ToString().Substring(0, dBAverage.ToString().IndexOf('.') + 3)}dB, {offset}dB away from the target RMS of: {targetRMS}.");
+            string averageString = dBAverage.ToString().Substring(0, dBAverage.ToString().IndexOf('.') + 3);
+
+            Log($"Average RMS of song is: {averageString}dB, {offset}dB away from the target RMS of: {targetRMS}.");
 
             return offset;
         }
