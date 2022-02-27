@@ -236,7 +236,10 @@ namespace C3Tools
                         }
                         xPackage.CloseIO();
 
-                        CalculateOggLoudness(songfolder + "song.ogg");
+                        double attenuationOffset = CalculateOggLoudness(songfolder + "song.ogg");
+
+                        Tools.DeleteFile(songfolder + "song.ogg");
+                        Tools.DeleteFolder(songfolder);
 
                         // TODO: Offset Attenuation values
 
@@ -245,9 +248,6 @@ namespace C3Tools
                         // TODO: Write DTA
 
                         // TODO: Write CON
-
-                        Tools.DeleteFolder(songfolder);
-
 
                         success++;
 
@@ -282,24 +282,68 @@ namespace C3Tools
             Log(mixed && File.Exists(ogg) ? "Success" : "Failed");
         }
 
-        private void CalculateOggLoudness(string ogg)
+        private double CalculateOggLoudness(string ogg)
         {
-            //TODO: Actually check the loudness.
+
+            // How we are determining the average loudness is to grab the top percentage of
+            // levels, and then averaging them out. We grab a percentage of the levels because
+            // we can ignore the most quiet parts of the song, as well as the loudest parts of the song.
+            int topPercentToKeep = 60;
+            int topPercentToStrip = 5;
+
+            // -15.4 RMS is about -6.4 dBFS, which is what we are going to aim for.
+            double targetRMS = -15.4;
+
             Log("Determining loudness of ogg...");
 
             Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
 
             var BassStream = Bass.BASS_StreamCreateFile(ogg, 0, 0, BASSFlag.BASS_STREAM_DECODE);
             var level = new float[1];
+            List<double> dBLevels = new List<double>();
 
+            // Get the audio levels of the OGG file.
             while (Bass.BASS_ChannelGetLevel(BassStream, level, 1, BASSLevel.BASS_LEVEL_RMS))
             {
-                Log(level[0].ToString());
+
+                double levelDouble = Convert.ToDouble(level[0]);
+
+                // Translate the level to dB.
+                double dblevel = levelDouble > 0 ? 20 * Math.Log10(levelDouble) : -1000;
+                dBLevels.Add(dblevel);
+
+                //Log(dblevel.ToString());
             }
             Bass.BASS_StreamFree(BassStream);
-
-
             Bass.BASS_Free();
+
+            dBLevels.Sort();
+
+            // Remove the bottom percent.
+            int countToKeep = (int)Math.Floor(dBLevels.Count() * (topPercentToKeep * 0.01));
+            dBLevels.RemoveRange(0, dBLevels.Count() - countToKeep);
+
+            // Remove the top percent.
+            int countToStrip = (int)Math.Floor(dBLevels.Count() * (topPercentToStrip * 0.01));
+            dBLevels.RemoveRange(dBLevels.Count() - countToStrip, countToStrip);
+
+            /*
+            foreach (var item in dBLevels)
+            {
+                Log(item.ToString());
+            }
+            */
+
+            double dBAverage = dBLevels.Average();
+
+            double offset = dBAverage - targetRMS;
+
+            // Strip most of the decimal places, because we don't need to be *that* precise.
+            offset = double.Parse(offset.ToString().Substring(0, offset.ToString().IndexOf('.') + 3));
+
+            Log($"Average RMS of song is: {dBAverage.ToString().Substring(0, dBAverage.ToString().IndexOf('.') + 3)}dB, {offset}dB away from the target RMS of: {targetRMS}.");
+
+            return offset;
         }
 
         private void btnRefresh_Click(object sender, EventArgs e)
@@ -377,7 +421,7 @@ namespace C3Tools
             if (btnBegin.Text == "Cancel")
             {
                 backgroundWorker1.CancelAsync();
-                Log("User cancelled process...stopping as soon as possible");
+                Log("User cancelled process... Stopping as soon as possible.");
                 btnBegin.Enabled = false;
                 return;
             }
@@ -397,7 +441,7 @@ namespace C3Tools
                 }
                 else
                 {
-                    Log("No files found ... there's nothing to do");
+                    Log("No files found... There's nothing to do");
                     EnableDisable(true);
                 }
             }
@@ -436,7 +480,7 @@ namespace C3Tools
         private void VolumeNormalizerPrep_Shown(object sender, EventArgs e)
         {
             Log("Welcome to " + Text);
-            Log("Drag and drop the CON /LIVE file(s) to be converted here");
+            Log("Drag and drop the CON /LIVE file(s) to be processed here");
             Log("Or click 'Change Input Folder' to select the files");
             Log("Ready to begin");
             txtFolder.Text = inputDir;
@@ -445,7 +489,7 @@ namespace C3Tools
         private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
             if (ProcessFiles()) return;
-            Log("There was an error processing the files ... stopping here");
+            Log("There was an error processing the files... Stopping here.");
         }
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
