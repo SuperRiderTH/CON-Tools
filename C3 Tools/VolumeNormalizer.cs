@@ -20,7 +20,6 @@ namespace C3Tools
         private DateTime startTime;
         private readonly NemoTools Tools;
         private readonly DTAParser Parser;
-        private string AttenuationValues = "";
 
         public VolumeNormalizer(Color ButtonBackColor, Color ButtonTextColor)
         {
@@ -219,14 +218,23 @@ namespace C3Tools
                         Tools.DeleteFile(songfolder + "song.ogg");
                         Tools.DeleteFolder(songfolder);
 
-                        Log(AttenuationValues);
+                        // Offset Attenuation values
+                        var attenuationValues = Parser.Songs[0].OriginalAttenuationValues.Trim().Split(' ');
+                        string finalValues = "";
 
-                        // TODO: Offset Attenuation values
+                        foreach (var value in attenuationValues)
+	                    {
+                            double preFinal = double.Parse(value) - attenuationOffset;
+                            finalValues += $"{FormatDB(preFinal)} ";
+	                    }
+
+                        // Trim the white space off the end of the string.
+                        finalValues = finalValues.Trim();
 
                         // TODO: Backup DTA if selected
 
 
-                        Log("Writing changes to DTA...");
+                        //Log("Writing changes to DTA...");
                         //WriteDTA();
 
                         // TODO: Write DTA
@@ -271,14 +279,19 @@ namespace C3Tools
 
             // How we are determining the average loudness is to grab the top percentage of
             // levels, and then averaging them out. We grab a percentage of the levels because
-            // we can ignore the most quiet parts of the song, as well as the loudest parts of the song.
-            int topPercentToKeep = 60;
-            int topPercentToStrip = 5;
+            // we can ignore the most quiet parts of the song, as well as some of the loudest parts.
+            int topPercentToKeep = 80;
+            int topPercentToStrip = 15;
 
-            // -16.4 RMS is about -6.4 dBFS, which is what we are going to aim for.
-            double targetRMS = -16.4;
+            // We will remove some of the levels from the beginning and the end of the song
+            // to compensate for the count-in and ending of the song.
+            int secondsToRemoveFromStart = 4;
+            int secondsToRemoveFromEnd = 8;
 
-            Log("Determining loudness of ogg...");
+            // We are aiming for -6.4 dB.
+            double targetDB = -6.4;
+
+            Log("Determining loudness of song...");
 
             Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
 
@@ -287,7 +300,7 @@ namespace C3Tools
             List<double> dBLevels = new List<double>();
 
             // Get the audio levels of the OGG file.
-            while (Bass.BASS_ChannelGetLevel(BassStream, level, 1, BASSLevel.BASS_LEVEL_RMS))
+            while (Bass.BASS_ChannelGetLevel(BassStream, level, 1, BASSLevel.BASS_LEVEL_STEREO))
             {
 
                 double levelDouble = Convert.ToDouble(level[0]);
@@ -301,14 +314,18 @@ namespace C3Tools
             Bass.BASS_StreamFree(BassStream);
             Bass.BASS_Free();
 
+            // Remove the beginning and end of the song
+            dBLevels.RemoveRange(0, secondsToRemoveFromStart);
+            dBLevels.RemoveRange(dBLevels.Count() - secondsToRemoveFromEnd, secondsToRemoveFromEnd);
+
+            // Sort by volume
             dBLevels.Sort();
 
-            // Remove the bottom percent.
+            // Calculate and remove the amount of levels requested.
             int countToKeep = (int)Math.Floor(dBLevels.Count() * (topPercentToKeep * 0.01));
-            dBLevels.RemoveRange(0, dBLevels.Count() - countToKeep);
-
-            // Remove the top percent.
             int countToStrip = (int)Math.Floor(dBLevels.Count() * (topPercentToStrip * 0.01));
+
+            dBLevels.RemoveRange(0, dBLevels.Count() - countToKeep);
             dBLevels.RemoveRange(dBLevels.Count() - countToStrip, countToStrip);
 
             /*
@@ -319,19 +336,31 @@ namespace C3Tools
             */
 
             double dBAverage = dBLevels.Average();
-
-            double offset = dBAverage - targetRMS;
+            double offset = dBAverage - targetDB;
+            
 
             // Strip most of the decimal places, because we don't need to be *that* precise.
-            offset = double.Parse(offset.ToString().Substring(0, offset.ToString().IndexOf('.') + 3));
+            offset = double.Parse(FormatDB(offset));
 
-            string averageString = dBAverage.ToString().Substring(0, dBAverage.ToString().IndexOf('.') + 3);
-
-            Log($"Average RMS of song is: {averageString}dB, {offset}dB away from the target RMS of: {targetRMS}.");
+            Log($"Average dB of song is: {FormatDB(dBAverage)} dB, {FormatDB(offset)} dB away from the target dB of: {targetDB}.");
 
             return offset;
         }
 
+        string FormatDB(double level)
+        {
+            // We do this in order to not deal with *very* small numbers in our string output.
+            if (level > -0.01 && level < 0.01)
+	        {
+                return "0.00";
+	        }
+            else
+            {
+                // Here we limit the length of the output string to two decimal places.
+                string levelString = level.ToString();
+                return $"{levelString.Split('.')[0]}.{ levelString.Split('.')[1].Substring( 0, Math.Min( 2, levelString.Split('.')[1].Length ) ) }";
+            }
+        }
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {

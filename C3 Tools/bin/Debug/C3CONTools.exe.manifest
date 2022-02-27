@@ -55,14 +55,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="C3CONTools.exe" size="11197440">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="C3CONTools.exe" size="11197952">
       <assemblyIdentity name="C3CONTools" version="3.9.9.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>wVG1j1mr0sPp+5BK3gF3Aot5P+lVBQhNrjOQzFoI65c=</dsig:DigestValue>
+        <dsig:DigestValue>7CRaLTJ7V3LxTv1LmiDIYhlTdOc7JxDPKO4t9TZZCwg=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
