@@ -309,10 +309,12 @@ namespace C3Tools
                                 z++;
                                 line = entry[z];
                                 song.AttenuationValues = line.Replace("(", "").Replace(")", "").Replace("'", "").Replace("vols", "");
+                                song.OriginalAttenuationValues = song.AttenuationValues;
                             }
                             else if (line.Contains("(vols"))
                             {
                                 song.AttenuationValues = line.Replace("(", "").Replace(")", "").Replace("'", "").Replace("vols", "");
+                                song.OriginalAttenuationValues = song.AttenuationValues;
                             }
                             else if (line.Contains("'pans'"))
                             {
@@ -603,6 +605,10 @@ namespace C3Tools
                             else if (line.Contains(";ExpertOnly=1"))
                             {
                                 song.ExpertOnly = true;
+                            }
+                            else if (line.Contains(";OriginalAttenuationValues="))
+                            {
+                                song.OriginalAttenuationValues = line.Replace(";OriginalAttenuationValues=", "");
                             }
                         }
                         catch (Exception ex)
@@ -2035,6 +2041,7 @@ namespace C3Tools
         public string DrumBank { get; set; }
         public string ChartAuthor { get; set; }
         public string AttenuationValues { get; set; }
+        public string OriginalAttenuationValues { get; set; }
         public string PanningValues { get; set; }
         public string ProBassTuning { get; set; }
         public string ProGuitarTuning { get; set; }
@@ -2118,6 +2125,7 @@ namespace C3Tools
             OverrideName = "";
             ChartAuthor = "";
             AttenuationValues = "";
+            OriginalAttenuationValues = "";
             PanningValues = "";
             ProBassTuning = "";
             ProGuitarTuning = "";

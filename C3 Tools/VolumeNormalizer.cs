@@ -148,23 +148,6 @@ namespace C3Tools
             txtFolder.Focus();
         }
         
-        public bool loadDTA()
-        {
-            try
-            {
-                // We really only care about these values.
-                AttenuationValues = Parser.Songs[0].AttenuationValues;
-                //Log(AttenuationValues);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Log("There was an error processing that songs.dta file");
-                Log("The error says: " + ex.Message);
-                return false;
-            }
-        }
-
         private bool ProcessFiles()
         {
             var counter = 0;
@@ -180,6 +163,7 @@ namespace C3Tools
                         counter++;
                         Parser.ExtractDTA(file);
                         Parser.ReadDTA(Parser.DTA);
+                            
                         if (Parser.Songs.Count > 1)
                         {
                             Log("File " + Path.GetFileName(file) + " is a pack, try dePACKing first, skipping...");
@@ -190,15 +174,8 @@ namespace C3Tools
                             Log("There was an error processing the songs.dta file");
                             continue;
                         }
-                        if (loadDTA())
-                        {
-                            Log("Loaded and processed songs.dta file for song #" + counter + " successfully");
-                            Log("Song #" + counter + " is " + Parser.Songs[0].Artist + " - " + Parser.Songs[0].Name);
-                        }
-                        else
-                        {
-                            return false;
-                        }
+
+                        Log("Song #" + counter + " is " + Parser.Songs[0].Artist + " - " + Parser.Songs[0].Name);
 
                         string internal_name = Parser.Songs[0].InternalName;
 
@@ -234,16 +211,23 @@ namespace C3Tools
                             xPackage.CloseIO();
                             continue;
                         }
+
                         xPackage.CloseIO();
 
-                        double attenuationOffset = CalculateOggLoudness(songfolder + "song.ogg");
+                        double attenuationOffset = CalculateVolumeOffset(songfolder + "song.ogg");
 
                         Tools.DeleteFile(songfolder + "song.ogg");
                         Tools.DeleteFolder(songfolder);
 
+                        Log(AttenuationValues);
+
                         // TODO: Offset Attenuation values
 
                         // TODO: Backup DTA if selected
+
+
+                        Log("Writing changes to DTA...");
+                        //WriteDTA();
 
                         // TODO: Write DTA
 
@@ -282,7 +266,7 @@ namespace C3Tools
             Log(mixed && File.Exists(ogg) ? "Success" : "Failed");
         }
 
-        private double CalculateOggLoudness(string ogg)
+        private double CalculateVolumeOffset(string ogg)
         {
 
             // How we are determining the average loudness is to grab the top percentage of
@@ -345,6 +329,7 @@ namespace C3Tools
 
             return offset;
         }
+
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
