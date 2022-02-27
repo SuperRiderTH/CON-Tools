@@ -246,7 +246,7 @@ namespace C3Tools
 
                         // TODO: Write CON
 
-                        //Tools.DeleteFolder(songfolder);
+                        Tools.DeleteFolder(songfolder);
 
 
                         success++;
@@ -285,17 +285,21 @@ namespace C3Tools
         private void CalculateOggLoudness(string ogg)
         {
             //TODO: Actually check the loudness.
-            Log("Determining loudness of ogg");
+            Log("Determining loudness of ogg...");
 
-            //Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
+            Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
 
-            //var BassStream = Bass.BASS_StreamCreateFile(ogg, 0, 0, BASSFlag.BASS_STREAM_DECODE);
-            //var level = new float[1];
+            var BassStream = Bass.BASS_StreamCreateFile(ogg, 0, 0, BASSFlag.BASS_STREAM_DECODE);
+            var level = new float[1];
 
-            
+            while (Bass.BASS_ChannelGetLevel(BassStream, level, 1, BASSLevel.BASS_LEVEL_RMS))
+            {
+                Log(level[0].ToString());
+            }
+            Bass.BASS_StreamFree(BassStream);
 
 
-            //Bass.BASS_Free();
+            Bass.BASS_Free();
         }
 
         private void btnRefresh_Click(object sender, EventArgs e)
