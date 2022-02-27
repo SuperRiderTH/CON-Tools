@@ -291,8 +291,8 @@ namespace C3Tools
             int topPercentToKeep = 60;
             int topPercentToStrip = 5;
 
-            // -15.4 RMS is about -6.4 dBFS, which is what we are going to aim for.
-            double targetRMS = -15.4;
+            // -16.4 RMS is about -6.4 dBFS, which is what we are going to aim for.
+            double targetRMS = -16.4;
 
             Log("Determining loudness of ogg...");
 
