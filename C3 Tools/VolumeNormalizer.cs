@@ -193,9 +193,7 @@ namespace C3Tools
                             var xPackage = new STFSPackage(file);
                             if (!xPackage.ParseSuccess)
                             {
-                                Log("Failed to parse '" + Path.GetFileName(file) + "'");
-                                Log("Skipping this file");
-                                continue;
+                                throw new Exception($"Failed to parse '{Path.GetFileName(file)}'");
                             }
 
                             var xMOGG = xPackage.GetFile("songs/" + internal_name + "/" + internal_name + ".mogg");
@@ -207,10 +205,8 @@ namespace C3Tools
                             }
                             else
                             {
-                                Log("ERROR: Did not find an audio file in that CON file!");
-                                Log("Skipping this song...");
                                 xPackage.CloseIO();
-                                continue;
+                                throw new Exception($"Could not find an audio file!'");
                             }
 
                             xPackage.CloseIO();
