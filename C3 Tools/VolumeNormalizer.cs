@@ -250,7 +250,7 @@ namespace C3Tools
 
                         WriteDTA();
 
-                        // TODO: Write CON
+                        WriteCON(file);
 
                         success++;
 
@@ -271,6 +271,65 @@ namespace C3Tools
             return true;
         }
 
+        private void WriteCON(string con)
+        {
+            // This function is prety much the same steps as the QuickDTAEditor.
+            // The only real difference is that we try to continue with other files
+            // instead of aborting everything on a problem.
+
+            Tools.CurrentFolder = Path.GetDirectoryName(con);
+
+            var dta = Path.GetTempPath() + "temp_dta.txt";
+            var backup = con + "_backup";
+
+            Tools.DeleteFile(backup);
+
+            Log("Backing up file before modifying it...");
+            File.Copy(con, backup);
+
+            // Make a new package
+            var song = new STFSPackage(con);
+            var xDTA = song.GetFile("/songs/songs.dta");
+
+            if (!xDTA.Replace(dta))
+            {
+                Tools.DeleteFile(con);
+                Log(Tools.MoveFile(backup, con) ? "Restored from backup." : "Failed to restore from backup!");
+                throw new Exception("Error replacing DTA file with modified one!");
+            }
+            Log("Replaced DTA file successfully!");
+
+            song.Header.MakeAnonymous();
+            song.Header.ThisType = PackageType.SavedGame;
+
+            Log("Saving changes to file...");
+            RSAParams signature = new RSAParams(Application.StartupPath + "\\bin\\KV.bin");
+            song.RebuildPackage(signature);
+            song.FlushPackage(signature);
+            song.CloseIO();
+
+            if (!Tools.UnlockCON(con))
+            {
+                Tools.DeleteFile(con);
+                Log(Tools.MoveFile(backup, con) ? "Restored from backup." : "Failed to restore from backup!");
+                throw new Exception("Failed to unlock CON file!");
+            }
+
+            if (!Tools.SignCON(con))
+            {
+                Tools.DeleteFile(con);
+                Log(Tools.MoveFile(backup, con) ? "Restored from backup." : "Failed to restore from backup!");
+                throw new Exception("Failed to sign CON file!");
+            }
+
+            Tools.DeleteFile(dta);
+
+            Log("Process completed successfully! Removing backup...");
+            Tools.DeleteFile(backup);
+
+            return;
+
+        }
 
         private void WriteDTA()
         {
@@ -279,7 +338,9 @@ namespace C3Tools
 
             var dta = Path.GetTempPath() + "temp_dta.txt";
 
-            if (!Parser.WriteDTAToFile(dta)) //write it out to file
+            Tools.DeleteFile(dta);
+
+            if (!Parser.WriteDTAToFile(dta))
             {
                 throw new Exception("Error writing temporary DTA file!");
             }
@@ -545,18 +606,20 @@ namespace C3Tools
         private void btnBegin_Click(object sender, EventArgs e)
         {
 
-            if (MessageBox.Show("This will modify all of the CON files in this folder.", "Are you sure you want to proceed?",
-            MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
-            {
-                return;
-            }
-
             if (btnBegin.Text == "Cancel")
             {
                 backgroundWorker1.CancelAsync();
                 Log("User cancelled process... Stopping as soon as possible.");
                 btnBegin.Enabled = false;
                 return;
+            }
+            else
+            {
+                if (MessageBox.Show("This will modify all of the CON files in this folder.", "Are you sure you want to proceed?",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                {
+                    return;
+                }
             }
 
             startTime = DateTime.Now;
