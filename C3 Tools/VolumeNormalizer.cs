@@ -20,6 +20,7 @@ namespace C3Tools
         private DateTime startTime;
         private readonly NemoTools Tools;
         private readonly DTAParser Parser;
+        private string attenuationValues;
 
         public VolumeNormalizer(Color ButtonBackColor, Color ButtonTextColor)
         {
@@ -177,67 +178,77 @@ namespace C3Tools
                         Log("Song #" + counter + " is " + Parser.Songs[0].Artist + " - " + Parser.Songs[0].Name);
 
                         string internal_name = Parser.Songs[0].InternalName;
+                        attenuationValues = "";
 
-                        // We are going to output files to a folder in order to process and remove them after.
-                        string songfolder = Tools.CurrentFolder + $"\\{internal_name}_ext\\";
-
-                        if (!Directory.Exists(songfolder))
+                        if (!chkRestore.Checked)
                         {
-                            Directory.CreateDirectory(songfolder);
-                        }
+                            // We are going to output files to a folder in order to process and remove them after.
+                            string songfolder = Tools.CurrentFolder + $"\\{internal_name}_ext\\";
 
-                        var xPackage = new STFSPackage(file);
-                        if (!xPackage.ParseSuccess)
-                        {
-                            Log("Failed to parse '" + Path.GetFileName(file) + "'");
-                            Log("Skipping this file");
-                            continue;
-                        }
-                        
-                        var xMOGG = xPackage.GetFile("songs/" + internal_name + "/" + internal_name + ".mogg");
-                        if (xMOGG != null)
-                        {
-                            var newmogg = songfolder + internal_name + ".mogg";
+                            if (!Directory.Exists(songfolder))
+                            {
+                                Directory.CreateDirectory(songfolder);
+                            }
 
-                            // We are down mixing the audio in order to determine the loudness later.
+                            var xPackage = new STFSPackage(file);
+                            if (!xPackage.ParseSuccess)
+                            {
+                                Log("Failed to parse '" + Path.GetFileName(file) + "'");
+                                Log("Skipping this file");
+                                continue;
+                            }
+
+                            var xMOGG = xPackage.GetFile("songs/" + internal_name + "/" + internal_name + ".mogg");
+                            if (xMOGG != null)
+                            {
+                                // We are down mixing the audio in order to determine the loudness later.
+                                xPackage.CloseIO();
+                                DownMixAudio(file, songfolder);
+                            }
+                            else
+                            {
+                                Log("ERROR: Did not find an audio file in that CON file!");
+                                Log("Skipping this song...");
+                                xPackage.CloseIO();
+                                continue;
+                            }
+
                             xPackage.CloseIO();
-                            DownMixAudio(file, songfolder);
+
+                            double attenuationOffset = CalculateVolumeOffset(songfolder + "song.ogg");
+
+                            Tools.DeleteFile(songfolder + "song.ogg");
+                            Tools.DeleteFolder(songfolder);
+
+                            // Offset Attenuation values
+                            var values = Parser.Songs[0].OriginalAttenuationValues.Trim().Split(' ');
+
+                            foreach (var value in values)
+                            {
+                                double preFinal = double.Parse(value) - attenuationOffset;
+                                attenuationValues += $"{FormatDB(preFinal)} ";
+                            }
+
+                            // Trim the white space off the end of the string.
+                            attenuationValues = attenuationValues.Trim();
+
                         }
                         else
                         {
-                            Log("ERROR: Did not find an audio file in that CON file!");
-                            Log("Skipping this song...");
-                            xPackage.CloseIO();
-                            continue;
+                            // Restore attenuation values to the original levels if requested
+                            attenuationValues = Parser.Songs[0].OriginalAttenuationValues.Trim();
+                            
+                            if (Parser.Songs[0].AttenuationValues.Trim() != Parser.Songs[0].OriginalAttenuationValues.Trim())
+                            {
+                                Log("Restoring original volume levels for the song...");
+                            }
+                            else
+                            {
+                                Log("Volume levels are not different than the original.");
+                            }
                         }
 
-                        xPackage.CloseIO();
-
-                        double attenuationOffset = CalculateVolumeOffset(songfolder + "song.ogg");
-
-                        Tools.DeleteFile(songfolder + "song.ogg");
-                        Tools.DeleteFolder(songfolder);
-
-                        // Offset Attenuation values
-                        var attenuationValues = Parser.Songs[0].OriginalAttenuationValues.Trim().Split(' ');
-                        string finalValues = "";
-
-                        foreach (var value in attenuationValues)
-	                    {
-                            double preFinal = double.Parse(value) - attenuationOffset;
-                            finalValues += $"{FormatDB(preFinal)} ";
-	                    }
-
-                        // Trim the white space off the end of the string.
-                        finalValues = finalValues.Trim();
-
-                        // TODO: Backup DTA if selected
-
-
-                        //Log("Writing changes to DTA...");
-                        //WriteDTA();
-
-                        // TODO: Write DTA
+                        WriteDTA();
 
                         // TODO: Write CON
 
@@ -258,6 +269,108 @@ namespace C3Tools
             }
             Log("Successfully processed " + success + " of " + counter + " files");
             return true;
+        }
+
+
+        private void WriteDTA()
+        {
+            // We write the DTA, and patch in the changed volume numbers on the fly.
+            Log("Writing changes to DTA...");
+
+            var dta = Path.GetTempPath() + "temp_dta.txt";
+
+            if (!Parser.WriteDTAToFile(dta)) //write it out to file
+            {
+                throw new Exception("Error writing temporary DTA file!");
+            }
+
+            var dtaLines = new List<string>();
+            var dtaLinesNew = new List<string>();
+
+            using (var streamReader = new StreamReader(dta, Encoding.Default))
+            {
+                int indexOfVol = 100;
+                int indexOfEnd = 0;
+                bool valuesExist = false;
+
+                do
+                {
+                    dtaLines.Add(streamReader.ReadLine());
+                } while (!streamReader.EndOfStream);
+
+                // We want to check if the original values exist before we write them later.
+                foreach (var item in dtaLines)
+                {
+                    if (item.Contains(";OriginalAttenuationValues="))
+                    {
+                        valuesExist = true;
+                    }
+                }
+
+                // Go through all of the lines of the DTA
+                for (int i = 0; i < dtaLines.Count; i++)
+                {
+                    var line = dtaLines[i];
+
+                    if (line.Contains("'vols'"))
+                    {
+                        if (!line.Contains("(vols"))
+                        {
+                            // We don't need this line, we need the next one.
+                            dtaLinesNew.Add(line);
+                            i++;
+                            line = dtaLines[i];
+                        }
+
+                        // Find when the volume starts.
+                        for (int j = 0; j < line.Length; j++)
+                        {
+                            if (Char.IsDigit(line[j]) && j < indexOfVol)
+                            {
+                                indexOfVol = j;
+                            }
+                        }
+
+                        // If the first number is negative, we want that.
+                        if (line[indexOfVol - 1] == '-')
+                        {
+                            indexOfVol--;
+                        }
+
+                        // Find the closing )
+                        indexOfEnd = line.IndexOf(')');
+
+                        // Write the modified line.
+                        line = line.Substring(0, indexOfVol) + attenuationValues + line.Substring(indexOfEnd);
+
+                    }
+
+                    // Write line
+                    dtaLinesNew.Add(line);
+
+                    // We write our own line to the DTA file here.
+                    if (line.Contains(";ExpertOnly"))
+                    {
+                        if (!valuesExist)
+                        {
+                            dtaLinesNew.Add($";OriginalAttenuationValues={Parser.Songs[0].OriginalAttenuationValues.Trim()}");
+                        }
+                    }
+                }
+                streamReader.Close();
+            }
+
+            // Actually output the file.
+            var streamWriter = new StreamWriter(dta, false, Encoding.Default);
+            using (streamWriter)
+            {
+                foreach (var line in dtaLinesNew)
+                {
+                    streamWriter.WriteLine(line);
+                }
+                streamWriter.Close();
+            }
+
         }
 
         private void DownMixAudio(string CON, string folder)
@@ -284,9 +397,8 @@ namespace C3Tools
             int topPercentToStrip = 15;
 
             // We will remove some of the levels from the beginning and the end of the song
-            // to compensate for the count-in and ending of the song.
+            // to compensate for the count-in of the song.
             int secondsToRemoveFromStart = 4;
-            int secondsToRemoveFromEnd = 8;
 
             // We are aiming for -6.4 dB.
             double targetDB = -6.4;
@@ -307,7 +419,13 @@ namespace C3Tools
 
                 // Translate the level to dB.
                 double dblevel = levelDouble > 0 ? 20 * Math.Log10(levelDouble) : -1000;
-                dBLevels.Add(dblevel);
+
+                // We want to not use any section of the song that is too quiet in our checking.
+                // This also has the added benefit of ignoring any silence at the end or beginning.
+                if (dblevel > -24)
+                {
+                    dBLevels.Add(dblevel);
+                }
 
                 //Log(dblevel.ToString());
             }
@@ -316,7 +434,6 @@ namespace C3Tools
 
             // Remove the beginning and end of the song
             dBLevels.RemoveRange(0, secondsToRemoveFromStart);
-            dBLevels.RemoveRange(dBLevels.Count() - secondsToRemoveFromEnd, secondsToRemoveFromEnd);
 
             // Sort by volume
             dBLevels.Sort();
@@ -422,7 +539,7 @@ namespace C3Tools
             picWorking.Visible = !enabled;
             lstLog.Cursor = enabled ? Cursors.Default : Cursors.WaitCursor;
             Cursor = lstLog.Cursor;
-            chkBackup.Enabled = enabled;
+            chkRestore.Enabled = enabled;
         }
 
         private void btnBegin_Click(object sender, EventArgs e)
@@ -542,10 +659,6 @@ namespace C3Tools
             TopMost = picPin.Tag.ToString() == "pinned";
         }
 
-        private void radioSeparate_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
     }
 
 }

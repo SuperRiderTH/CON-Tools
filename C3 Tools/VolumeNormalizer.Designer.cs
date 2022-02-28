@@ -38,7 +38,7 @@
             this.picPin = new System.Windows.Forms.PictureBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.chkBackup = new System.Windows.Forms.ToolStripMenuItem();
+            this.chkRestore = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnReset = new System.Windows.Forms.Button();
@@ -137,16 +137,17 @@
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.chkBackup});
+            this.chkRestore});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.optionsToolStripMenuItem.Text = "Options";
             // 
-            // chkBackup
+            // chkRestore
             // 
-            this.chkBackup.Name = "chkBackup";
-            this.chkBackup.Size = new System.Drawing.Size(181, 22);
-            this.chkBackup.Text = "Backup Original DTA";
+            this.chkRestore.CheckOnClick = true;
+            this.chkRestore.Name = "chkRestore";
+            this.chkRestore.Size = new System.Drawing.Size(206, 22);
+            this.chkRestore.Text = "Restore Original Volumes";
             // 
             // helpToolStripMenuItem1
             // 
@@ -295,6 +296,6 @@
         private System.Windows.Forms.PictureBox picWorking;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.PictureBox picPin;
-        private System.Windows.Forms.ToolStripMenuItem chkBackup;
+        private System.Windows.Forms.ToolStripMenuItem chkRestore;
     }
 }

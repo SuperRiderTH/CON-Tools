@@ -2735,7 +2735,7 @@ namespace C3Tools
 
             if (bypass)
             {
-                //TODO: What are we bypassing here?
+                // We can not bypass encryption, so this argument is ignored.
             }
 
             if (MoggIsEncrypted(mData))
