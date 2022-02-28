@@ -348,7 +348,7 @@ namespace C3Tools
             var dtaLines = new List<string>();
             var dtaLinesNew = new List<string>();
 
-            using (var streamReader = new StreamReader(dta, Encoding.Default))
+            using (var streamReader = new StreamReader(dta))
             {
                 int indexOfVol = 100;
                 int indexOfEnd = 0;
@@ -422,7 +422,7 @@ namespace C3Tools
             }
 
             // Actually output the file.
-            var streamWriter = new StreamWriter(dta, false, Encoding.Default);
+            var streamWriter = new StreamWriter(dta, false);
             using (streamWriter)
             {
                 foreach (var line in dtaLinesNew)
