@@ -414,7 +414,7 @@ namespace C3Tools
         private float GetStemVolume(int curr_channel)
         {
             const double max_dB = 1.0;
-            var volumes = Parser.Songs[0].AttenuationValues.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
+            var volumes = Parser.Songs[0].OriginalAttenuationValues.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
             float vol;
             try
             {
@@ -514,7 +514,7 @@ namespace C3Tools
             var matrix = in_matrix;
 
             //split attenuation and panning info from DTA file for index access
-            var volumes = song.AttenuationValues.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
+            var volumes = song.OriginalAttenuationValues.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
             var pans = song.PanningValues.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
 
             //BASS.NET lets us specify maximum volume when converting dB to Level

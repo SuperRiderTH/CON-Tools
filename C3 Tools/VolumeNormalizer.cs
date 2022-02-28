@@ -196,6 +196,11 @@ namespace C3Tools
                                 throw new Exception($"Failed to parse '{Path.GetFileName(file)}'");
                             }
 
+                            if (Parser.Songs[0].AttenuationValues.Trim() != Parser.Songs[0].OriginalAttenuationValues.Trim())
+                            {
+                                Log("Original volume levels will be used for processing.");
+                            }
+
                             var xMOGG = xPackage.GetFile("songs/" + internal_name + "/" + internal_name + ".mogg");
                             if (xMOGG != null)
                             {
