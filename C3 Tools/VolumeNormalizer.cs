@@ -458,11 +458,11 @@ namespace C3Tools
             int topPercentToKeep = 80;
             int topPercentToStrip = 15;
 
-            // We will remove some of the levels from the beginning and the end of the song
+            // We will remove some of the levels from the beginning of the song
             // to compensate for the count-in of the song.
             int secondsToRemoveFromStart = 4;
 
-            // We are aiming for -6.4 dB.
+            // Our target loudness of that we want. Normally -6.4 dB.
             double targetDB = -6.4;
 
             Log("Determining loudness of song...");
@@ -483,7 +483,7 @@ namespace C3Tools
                 double dblevel = levelDouble > 0 ? 20 * Math.Log10(levelDouble) : -1000;
 
                 // We want to not use any section of the song that is too quiet in our checking.
-                // This also has the added benefit of ignoring any silence at the end or beginning.
+                // This also has the added benefit of ignoring any silence in the song.
                 if (dblevel > -24)
                 {
                     dBLevels.Add(dblevel);
@@ -494,7 +494,7 @@ namespace C3Tools
             Bass.BASS_StreamFree(BassStream);
             Bass.BASS_Free();
 
-            // Remove the beginning and end of the song
+            // Remove the beginning of the song
             dBLevels.RemoveRange(0, secondsToRemoveFromStart);
 
             // Sort by volume
@@ -530,9 +530,9 @@ namespace C3Tools
         {
             // We do this in order to not deal with *very* small numbers in our string output.
             if (level > -0.01 && level < 0.01)
-	        {
+	    {
                 return "0.00";
-	        }
+	    }
             else
             {
                 // Here we limit the length of the output string to two decimal places.
