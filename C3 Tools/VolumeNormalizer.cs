@@ -462,7 +462,7 @@ namespace C3Tools
             // to compensate for the count-in of the song.
             int secondsToRemoveFromStart = 4;
 
-            // Our target loudness of that we want. Normally -6.4 dB.
+            // Our target loudness that we want. Normally -6.4 dB.
             double targetDB = -6.4;
 
             Log("Determining loudness of song...");
