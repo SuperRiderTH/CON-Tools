@@ -39,18 +39,26 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chkRestore = new System.Windows.Forms.ToolStripMenuItem();
+            this.chkBackupAudio = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnReset = new System.Windows.Forms.Button();
             this.txtFolder = new System.Windows.Forms.TextBox();
             this.btnFolder = new System.Windows.Forms.Button();
             this.btnRefresh = new System.Windows.Forms.Button();
-            this.picWorking = new System.Windows.Forms.PictureBox();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.picWorking = new System.Windows.Forms.PictureBox();
+            this.grpMogg = new System.Windows.Forms.GroupBox();
+            this.numTargetValue = new System.Windows.Forms.NumericUpDown();
+            this.lblTargetVolume = new System.Windows.Forms.Label();
+            this.radioDoNotRender = new System.Windows.Forms.RadioButton();
+            this.radioAllowRender = new System.Windows.Forms.RadioButton();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picPin)).BeginInit();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picWorking)).BeginInit();
+            this.grpMogg.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numTargetValue)).BeginInit();
             this.SuspendLayout();
             // 
             // lstLog
@@ -64,9 +72,9 @@
             this.lstLog.ContextMenuStrip = this.contextMenuStrip1;
             this.lstLog.FormattingEnabled = true;
             this.lstLog.HorizontalScrollbar = true;
-            this.lstLog.Location = new System.Drawing.Point(12, 122);
+            this.lstLog.Location = new System.Drawing.Point(12, 174);
             this.lstLog.Name = "lstLog";
-            this.lstLog.Size = new System.Drawing.Size(568, 223);
+            this.lstLog.Size = new System.Drawing.Size(568, 171);
             this.lstLog.TabIndex = 12;
             this.lstLog.DragDrop += new System.Windows.Forms.DragEventHandler(this.HandleDragDrop);
             this.lstLog.DragEnter += new System.Windows.Forms.DragEventHandler(this.HandleDragEnter);
@@ -96,7 +104,7 @@
             this.btnBegin.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnBegin.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnBegin.ForeColor = System.Drawing.Color.White;
-            this.btnBegin.Location = new System.Drawing.Point(516, 86);
+            this.btnBegin.Location = new System.Drawing.Point(516, 139);
             this.btnBegin.Name = "btnBegin";
             this.btnBegin.Size = new System.Drawing.Size(64, 29);
             this.btnBegin.TabIndex = 51;
@@ -137,7 +145,8 @@
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.chkRestore});
+            this.chkRestore,
+            this.chkBackupAudio});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.optionsToolStripMenuItem.Text = "Options";
@@ -146,8 +155,16 @@
             // 
             this.chkRestore.CheckOnClick = true;
             this.chkRestore.Name = "chkRestore";
-            this.chkRestore.Size = new System.Drawing.Size(206, 22);
+            this.chkRestore.Size = new System.Drawing.Size(285, 22);
             this.chkRestore.Text = "Restore Original Volumes";
+            // 
+            // chkBackupAudio
+            // 
+            this.chkBackupAudio.Checked = true;
+            this.chkBackupAudio.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkBackupAudio.Name = "chkBackupAudio";
+            this.chkBackupAudio.Size = new System.Drawing.Size(285, 22);
+            this.chkBackupAudio.Text = "Back up CON file on audio modification";
             // 
             // helpToolStripMenuItem1
             // 
@@ -168,7 +185,7 @@
             this.btnReset.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnReset.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnReset.ForeColor = System.Drawing.Color.White;
-            this.btnReset.Location = new System.Drawing.Point(12, 86);
+            this.btnReset.Location = new System.Drawing.Point(12, 139);
             this.btnReset.Name = "btnReset";
             this.btnReset.Size = new System.Drawing.Size(100, 29);
             this.btnReset.TabIndex = 54;
@@ -224,17 +241,6 @@
             this.btnRefresh.Visible = false;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
-            // picWorking
-            // 
-            this.picWorking.Image = global::C3Tools.Properties.Resources.working;
-            this.picWorking.Location = new System.Drawing.Point(240, 100);
-            this.picWorking.Name = "picWorking";
-            this.picWorking.Size = new System.Drawing.Size(128, 15);
-            this.picWorking.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.picWorking.TabIndex = 62;
-            this.picWorking.TabStop = false;
-            this.picWorking.Visible = false;
-            // 
             // backgroundWorker1
             // 
             this.backgroundWorker1.WorkerReportsProgress = true;
@@ -242,12 +248,99 @@
             this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
             this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
             // 
+            // picWorking
+            // 
+            this.picWorking.Image = global::C3Tools.Properties.Resources.working;
+            this.picWorking.Location = new System.Drawing.Point(239, 153);
+            this.picWorking.Name = "picWorking";
+            this.picWorking.Size = new System.Drawing.Size(128, 15);
+            this.picWorking.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.picWorking.TabIndex = 62;
+            this.picWorking.TabStop = false;
+            this.picWorking.Visible = false;
+            // 
+            // grpMogg
+            // 
+            this.grpMogg.Controls.Add(this.numTargetValue);
+            this.grpMogg.Controls.Add(this.lblTargetVolume);
+            this.grpMogg.Controls.Add(this.radioDoNotRender);
+            this.grpMogg.Controls.Add(this.radioAllowRender);
+            this.grpMogg.Location = new System.Drawing.Point(12, 86);
+            this.grpMogg.Name = "grpMogg";
+            this.grpMogg.Size = new System.Drawing.Size(568, 47);
+            this.grpMogg.TabIndex = 72;
+            this.grpMogg.TabStop = false;
+            this.grpMogg.Text = "Audio (mogg) options:";
+            // 
+            // numTargetValue
+            // 
+            this.numTargetValue.DecimalPlaces = 1;
+            this.numTargetValue.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.numTargetValue.Location = new System.Drawing.Point(513, 20);
+            this.numTargetValue.Maximum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTargetValue.Minimum = new decimal(new int[] {
+            80,
+            0,
+            0,
+            -2147418112});
+            this.numTargetValue.Name = "numTargetValue";
+            this.numTargetValue.Size = new System.Drawing.Size(49, 20);
+            this.numTargetValue.TabIndex = 71;
+            this.numTargetValue.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.numTargetValue.Value = new decimal(new int[] {
+            64,
+            0,
+            0,
+            -2147418112});
+            // 
+            // lblTargetVolume
+            // 
+            this.lblTargetVolume.AutoSize = true;
+            this.lblTargetVolume.Location = new System.Drawing.Point(406, 22);
+            this.lblTargetVolume.Name = "lblTargetVolume";
+            this.lblTargetVolume.Size = new System.Drawing.Size(101, 13);
+            this.lblTargetVolume.TabIndex = 70;
+            this.lblTargetVolume.Text = "Target Volume (dB):";
+            // 
+            // radioDoNotRender
+            // 
+            this.radioDoNotRender.AutoSize = true;
+            this.radioDoNotRender.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.radioDoNotRender.Location = new System.Drawing.Point(153, 20);
+            this.radioDoNotRender.Name = "radioDoNotRender";
+            this.radioDoNotRender.Size = new System.Drawing.Size(124, 17);
+            this.radioDoNotRender.TabIndex = 69;
+            this.radioDoNotRender.Text = "Don\'t re-render audio";
+            this.radioDoNotRender.UseVisualStyleBackColor = true;
+            // 
+            // radioAllowRender
+            // 
+            this.radioAllowRender.AutoSize = true;
+            this.radioAllowRender.Checked = true;
+            this.radioAllowRender.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.radioAllowRender.Location = new System.Drawing.Point(9, 20);
+            this.radioAllowRender.Name = "radioAllowRender";
+            this.radioAllowRender.Size = new System.Drawing.Size(138, 17);
+            this.radioAllowRender.TabIndex = 63;
+            this.radioAllowRender.TabStop = true;
+            this.radioAllowRender.Text = "Allow re-rendering audio";
+            this.radioAllowRender.UseVisualStyleBackColor = true;
+            // 
             // VolumeNormalizer
             // 
             this.AllowDrop = true;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.ClientSize = new System.Drawing.Size(592, 356);
+            this.Controls.Add(this.grpMogg);
             this.Controls.Add(this.picPin);
             this.Controls.Add(this.picWorking);
             this.Controls.Add(this.btnReset);
@@ -273,6 +366,9 @@
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picWorking)).EndInit();
+            this.grpMogg.ResumeLayout(false);
+            this.grpMogg.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numTargetValue)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -293,9 +389,15 @@
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.Button btnBegin;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
-        private System.Windows.Forms.PictureBox picWorking;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.PictureBox picPin;
         private System.Windows.Forms.ToolStripMenuItem chkRestore;
+        private System.Windows.Forms.PictureBox picWorking;
+        private System.Windows.Forms.GroupBox grpMogg;
+        private System.Windows.Forms.RadioButton radioDoNotRender;
+        private System.Windows.Forms.RadioButton radioAllowRender;
+        private System.Windows.Forms.NumericUpDown numTargetValue;
+        private System.Windows.Forms.Label lblTargetVolume;
+        private System.Windows.Forms.ToolStripMenuItem chkBackupAudio;
     }
 }

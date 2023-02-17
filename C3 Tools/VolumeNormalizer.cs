@@ -22,6 +22,10 @@ namespace C3Tools
         private readonly DTAParser Parser;
         private string attenuationValues;
 
+        // Our target loudness that we want. Normally -6.4 dB.
+        private double targetDB = -6.4;
+
+
         public VolumeNormalizer(Color ButtonBackColor, Color ButtonTextColor)
         {
             InitializeComponent();
@@ -161,6 +165,7 @@ namespace C3Tools
                     try
                     {
                         counter++;
+
                         Parser.ExtractDTA(file);
                         Parser.ReadDTA(Parser.DTA);
                             
@@ -220,6 +225,23 @@ namespace C3Tools
 
                             Tools.DeleteFile(songfolder + "song.ogg");
                             Tools.DeleteFolder(songfolder);
+
+                            // Check to see if audio needs to be increased in volume.
+                            if ( attenuationOffset > 0 )
+                            {
+                                // Backup the CON file first if we want a backup.
+                                if (chkBackupAudio.Checked)
+                                {
+                                    File.Copy(file, file + "_clean");
+                                }
+
+                                AdjustAudio(file, attenuationOffset);
+
+                                // Set the offset to 0, since we don't need to change it anymore.
+                                attenuationOffset = 0;
+
+                            }
+
 
                             // Offset Attenuation values
                             var values = Parser.Songs[0].OriginalAttenuationValues.Trim().Split(' ');
@@ -449,6 +471,12 @@ namespace C3Tools
             Log(mixed && File.Exists(ogg) ? "Success" : "Failed");
         }
 
+        private void AdjustAudio(string CON, double volume)
+        {
+            // TODO
+        }
+
+
         private double CalculateVolumeOffset(string ogg)
         {
 
@@ -461,9 +489,6 @@ namespace C3Tools
             // We will remove some of the levels from the beginning of the song
             // to compensate for the count-in of the song.
             int secondsToRemoveFromStart = 4;
-
-            // Our target loudness that we want. Normally -6.4 dB.
-            double targetDB = -6.4;
 
             Log("Determining loudness of song...");
 
@@ -618,7 +643,15 @@ namespace C3Tools
             }
             else
             {
-                if (MessageBox.Show("This will modify all of the CON files in this folder.", "Are you sure you want to proceed?",
+
+                string _tempPrepString = "This will modify all of the CON files in this folder.";
+
+                if ( radioAllowRender.Checked )
+                {
+                    _tempPrepString += "\n\nIf the volume needs to be increased, audio will be modified!";
+                }
+
+                if (MessageBox.Show(_tempPrepString, "Are you sure you want to proceed?",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
                 {
                     return;
@@ -628,6 +661,8 @@ namespace C3Tools
             startTime = DateTime.Now;
             Tools.CurrentFolder = txtFolder.Text;
             EnableDisable(false);
+
+            targetDB = Double.Parse(numTargetValue.Value.ToString());
             
             try
             {
