@@ -183,7 +183,7 @@ namespace C3Tools
                         if (!chkRestore.Checked)
                         {
                             // We are going to output files to a folder in order to process and remove them after.
-                            string songfolder = Tools.CurrentFolder + $"\\{internal_name}_ext\\";
+                            string songfolder = Tools.CurrentFolder + "\\" + internal_name + "_ext\\";
 
                             if (!Directory.Exists(songfolder))
                             {
@@ -193,7 +193,7 @@ namespace C3Tools
                             var xPackage = new STFSPackage(file);
                             if (!xPackage.ParseSuccess)
                             {
-                                throw new Exception($"Failed to parse '{Path.GetFileName(file)}'");
+                                throw new Exception("Failed to parse '" + Path.GetFileName(file) + "'");
                             }
 
                             if (Parser.Songs[0].AttenuationValues.Trim() != Parser.Songs[0].OriginalAttenuationValues.Trim())
@@ -211,7 +211,7 @@ namespace C3Tools
                             else
                             {
                                 xPackage.CloseIO();
-                                throw new Exception($"Could not find an audio file!'");
+                                throw new Exception("Could not find an audio file!");
                             }
 
                             xPackage.CloseIO();
@@ -227,7 +227,7 @@ namespace C3Tools
                             foreach (var value in values)
                             {
                                 double preFinal = double.Parse(value) - attenuationOffset;
-                                attenuationValues += $"{FormatDB(preFinal)} ";
+                                attenuationValues += FormatDB(preFinal) + " ";
                             }
 
                             // Trim the white space off the end of the string.
@@ -415,7 +415,7 @@ namespace C3Tools
                     {
                         if (!valuesExist)
                         {
-                            dtaLinesNew.Add($";OriginalAttenuationValues={Parser.Songs[0].OriginalAttenuationValues.Trim()}");
+                            dtaLinesNew.Add(";OriginalAttenuationValues=" + Parser.Songs[0].OriginalAttenuationValues.Trim() );
                         }
                     }
                 }
@@ -521,7 +521,7 @@ namespace C3Tools
             // Strip most of the decimal places, because we don't need to be *that* precise.
             offset = double.Parse(FormatDB(offset));
 
-            Log($"Average dB of song is: {FormatDB(dBAverage)} dB, {FormatDB(offset)} dB away from the target dB of: {targetDB}.");
+            Log("Average dB of song is: " + FormatDB(dBAverage) + " dB, " + FormatDB(offset) + " dB away from the target dB of: " + targetDB.ToString() + ".");
 
             return offset;
         }
@@ -537,7 +537,9 @@ namespace C3Tools
             {
                 // Here we limit the length of the output string to two decimal places.
                 string levelString = level.ToString();
-                return $"{levelString.Split('.')[0]}.{ levelString.Split('.')[1].Substring( 0, Math.Min( 2, levelString.Split('.')[1].Length ) ) }";
+                string _tempString = levelString.Split('.')[0] + "." + levelString.Split('.')[1].Substring( 0, Math.Min( 2, levelString.Split('.')[1].Length ) );
+
+                return _tempString;
             }
         }
 
