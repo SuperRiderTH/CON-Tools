@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using C3Tools.Properties;
 using C3Tools.x360;
@@ -222,7 +223,9 @@ namespace C3Tools
                             Tools.DeleteFolder(songfolder);
 
                             // Offset Attenuation values
-                            var values = Parser.Songs[0].OriginalAttenuationValues.Trim().Split(' ');
+                            var preValues = Parser.Songs[0].OriginalAttenuationValues.Trim();
+                            var values = System.Text.RegularExpressions.Regex.Split(preValues, @"\s{1,}");
+                            
 
                             foreach (var value in values)
                             {
@@ -369,12 +372,14 @@ namespace C3Tools
                     }
                 }
 
+                var valuesWrote = false;
+
                 // Go through all of the lines of the DTA
                 for (int i = 0; i < dtaLines.Count; i++)
                 {
                     var line = dtaLines[i];
 
-                    if (line.Contains("'vols'"))
+                    if (line.Contains("vols"))
                     {
                         if (!line.Contains("(vols"))
                         {
@@ -410,15 +415,42 @@ namespace C3Tools
                     // Write line
                     dtaLinesNew.Add(line);
 
-                    // We write our own line to the DTA file here.
-                    if (line.Contains(";ExpertOnly"))
+                    
+
+                    if (valuesExist)
                     {
-                        if (!valuesExist)
+                        valuesWrote = true;
+                    }
+
+                    if (!valuesWrote)
+                    {
+                        // We write our own line to the DTA file here.
+                        if (line.Contains(";ExpertOnly"))
                         {
-                            dtaLinesNew.Add(";OriginalAttenuationValues=" + Parser.Songs[0].OriginalAttenuationValues.Trim() );
+                            dtaLinesNew.Add(";OriginalAttenuationValues=" + Parser.Songs[0].OriginalAttenuationValues.Trim());
+                            valuesWrote = true;
+                        }
+                    }
+
+                }
+
+                if (!valuesWrote)
+                {
+                    for (int i = dtaLines.Count; i > 0; i--)
+                    {
+                        if (i == (dtaLinesNew.LastIndexOf(dtaLinesNew.FindLast(element => element.Contains(")")))))
+                        {
+                            Log("End of dta...");
+                            if (!valuesExist)
+                            {
+                                Log("Values don't exist...");
+                                valuesWrote = true;
+                                dtaLinesNew.Insert(i, ";OriginalAttenuationValues=" + Parser.Songs[0].OriginalAttenuationValues.Trim());
+                            }
                         }
                     }
                 }
+
                 streamReader.Close();
             }
 
@@ -447,6 +479,7 @@ namespace C3Tools
                 throw new Exception(error);
             }
             Log(mixed && File.Exists(ogg) ? "Success" : "Failed");
+            Thread.Sleep(250);
         }
 
         private double CalculateVolumeOffset(string ogg)
@@ -470,6 +503,12 @@ namespace C3Tools
             Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
 
             var BassStream = Bass.BASS_StreamCreateFile(ogg, 0, 0, BASSFlag.BASS_STREAM_DECODE);
+
+            if ( BassStream == -1 )
+            {
+                Log( "BASS Error Code: " + Bass.BASS_ErrorGetCode() );
+            }
+
             var level = new float[1];
             List<double> dBLevels = new List<double>();
 
@@ -618,7 +657,10 @@ namespace C3Tools
             }
             else
             {
-                if (MessageBox.Show("This will modify all of the CON files in this folder.", "Are you sure you want to proceed?",
+
+                string _tempPrepString = "This will modify all of the CON files in this folder.";
+
+                if (MessageBox.Show(_tempPrepString, "Are you sure you want to proceed?",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
                 {
                     return;
