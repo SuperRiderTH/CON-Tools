@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -159,6 +159,8 @@ namespace C3Tools
                 {
                     if (VariousFunctions.ReadFileType(file) != XboxFileType.STFS) continue;
 
+                    string songfolder = "";
+
                     try
                     {
                         counter++;
@@ -181,10 +183,11 @@ namespace C3Tools
                         string internal_name = Parser.Songs[0].InternalName;
                         attenuationValues = "";
 
+                        // We are going to output files to a folder in order to process and remove them after.
+                        songfolder = Tools.CurrentFolder + "\\" + internal_name + "_ext\\";
+
                         if (!chkRestore.Checked)
                         {
-                            // We are going to output files to a folder in order to process and remove them after.
-                            string songfolder = Tools.CurrentFolder + "\\" + internal_name + "_ext\\";
 
                             if (!Directory.Exists(songfolder))
                             {
@@ -263,6 +266,9 @@ namespace C3Tools
                     {
                         Log("There was an error: " + ex.Message);
                         Log("Attempting to continue with the next file");
+
+                        Tools.DeleteFile(songfolder + "song.ogg");
+                        Tools.DeleteFolder(songfolder);
                     }
                 }
                 catch (Exception ex)
@@ -440,10 +446,10 @@ namespace C3Tools
                     {
                         if (i == (dtaLinesNew.LastIndexOf(dtaLinesNew.FindLast(element => element.Contains(")")))))
                         {
-                            Log("End of dta...");
+                            //Log("End of dta...");
                             if (!valuesExist)
                             {
-                                Log("Values don't exist...");
+                                //Log("Values don't exist...");
                                 valuesWrote = true;
                                 dtaLinesNew.Insert(i, ";OriginalAttenuationValues=" + Parser.Songs[0].OriginalAttenuationValues.Trim());
                             }
